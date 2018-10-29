@@ -11,12 +11,15 @@ var server = {}
 // create server
 server.http_server = http.createServer((request, response) => {
     // Get the url and parse it
-    let parsedUrl = url.parse(request.url)
+    const parsedUrl = url.parse(request.url)
+
+    // get the content type to deal with and pass the right estructure to the handler
+    const contentType = request.getHeader('Content-Type')
 
     // Get the path and remove extra characters
-    let path = parsedUrl.path.replace(/^\/+|\/+$/g,'')
+    const path = parsedUrl.path.replace(/^\/+|\/+$/g,'')
 
-    let payload = ''
+    const payload = ''
     request.on('data', (chunk) => {
         payload += decoder.write(chunk);
     });
@@ -35,12 +38,17 @@ server.http_server = http.createServer((request, response) => {
             else
                 chosenHandler = chosenHandler[method]
 
+        let parsedPayload = payload
+        if (contentType == 'application/json') {
+          parsedPayload = JSON.parse(payload)
+        }
+
         // calls the selected handler
-        chosenHandler(payload, (status_code, json_response) => {
+        chosenHandler(parsedPayload, (status_code, json_response) => {
             let body = JSON.stringify(json_response)
             response.setHeader('content-type','application/json')
             response.writeHead(status_code)
-            response.end(body) 
+            response.end(body)
         });
     });
 })
