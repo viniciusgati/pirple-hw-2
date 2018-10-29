@@ -34,4 +34,3 @@ handlers.notAcceptable = (_, callback) => {
 }
 
 module.exports = handlers;
-

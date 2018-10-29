@@ -10,8 +10,8 @@ console.info('loading users handlers')
 
 //send not found message if user requested anything else
 handlers.users.get = (payload, callback) => {
-    let hashed_id = hasher.hash(payload.id.toString())
-    db.read(hashed_id, (err, data) => {
+    let hashed_email = hasher.hash(payload.email.toString())
+    db.read(hashed_email, (err, data) => {
         if(err)
             callback(404, {
                 'error': 'user not found, maybe create a new one :)',
@@ -29,10 +29,26 @@ handlers.users.get = (payload, callback) => {
 
 handlers.users.post = (payload, callback) => {
     // validates the model
-    var password = data.payload.password.trim()
-    var password = typeof(data.payload.password) == 'string' && data.payload.password.trim().length == 11 ? data.payload.password : false;
+    let email = payload.email.trim()
+    let id = hasher.hash(email)
+    let email = typeof(payload.email) == 'string' && payload.email.trim().length == 11 ? payload.email : false
+    let name = typeof(payload.name) == 'string' && payload.name.length > 5 ? payload.name : false
+    let address = typeof(payload.address) == 'string' && payload.address > 5 ? payload.address : false
+    let street_address = typeof(payload.street_address) == 'string' && payload.street_address > 5 ? payload.street_address : false
 
     // verify if it exists, if yes message 'please use put'
+    db.list('/users', (err, fileNames) => {
+        let exist = fileNames.filter((fileName) => { return fileName == id }).length > 0
+        if(exist)
+            callback(200, {
+                'status': 'ok',
+                'error-code': null,
+            })
+        else {
+            
+        }
+
+    })
 
     // else create the user
 
@@ -50,4 +66,4 @@ handlers.users.delete = (payload, callback) => {
 
 }
 
-module.exports = handlers;
+module.exports = handlers
