@@ -30,7 +30,7 @@ handlers.users.get = (payload, callback) => {
 handlers.users.post = (payload, callback) => {
     // validates the model
     let email = payload.email.trim()
-    let email = typeof(payload.email) == 'string' && payload.email.trim().length == 11 ? payload.email : false
+    email = typeof(payload.email) == 'string' && payload.email.trim().length == 11 ? payload.email : false
     let name = typeof(payload.name) == 'string' && payload.name.length > 5 ? payload.name : false
     let address = typeof(payload.address) == 'string' && payload.address > 5 ? payload.address : false
     let street_address = typeof(payload.street_address) == 'string' && payload.street_address > 5 ? payload.street_address : false
@@ -71,7 +71,7 @@ handlers.users.post = (payload, callback) => {
 handlers.users.put = (payload, callback) => {
     // validates the model
     let email = payload.email.trim()
-    let email = typeof(payload.email) == 'string' && payload.email.trim().length == 11 ? payload.email : false
+    email = typeof(payload.email) == 'string' && payload.email.trim().length == 11 ? payload.email : false
     let name = typeof(payload.name) == 'string' && payload.name.length > 5 ? payload.name : false
     let address = typeof(payload.address) == 'string' && payload.address > 5 ? payload.address : false
     let street_address = typeof(payload.street_address) == 'string' && payload.street_address > 5 ? payload.street_address : false

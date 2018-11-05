@@ -1,5 +1,6 @@
 const db = require('../helpers/persistance')
 const hasher = require('../helpers/hasher')
+const helper = require('../helpers/helper')
 
 // Define users handlers
 let handlers = {
@@ -8,9 +9,9 @@ let handlers = {
 
 console.info('loading tokens handlers')
 
-handlers.users.post = (payload, callback) => {
+handlers.tokens.post = (payload, callback) => {
     let email = payload.email.trim()
-    let email = typeof(payload.email) == 'string' && payload.email.trim().length == 11 ? payload.email : false
+    email = typeof(payload.email) == 'string' && payload.email.trim().length == 11 ? payload.email : false
     if (email) {
         let id = hasher.hash(payload.email.toString())
         db.list('/users', (err, fileNames) => {
@@ -23,11 +24,12 @@ handlers.users.post = (payload, callback) => {
             } else {
                 let exist = fileNames.filter((fileName) => { return fileName == id }).length > 0
                 if (exist) {
-                    token = helpers.generateRandomToken()
+                    let token = helper.generateRandomToken(20)
+                    let expires = Date.now() + 1000 * 60 * 60
                     var data = {
-                        token: token,
-                        name: name,
-                        email: id
+                        hashed_email: id,
+                        email: email,
+                        expires: expires
                     }
                     db.create('.tokens', token, data, (err) => {
                         if (!err) {
@@ -50,22 +52,6 @@ handlers.users.post = (payload, callback) => {
                     })
                 }
             }
-        }
-        // db.read(hashed_email, (err, data) => {
-        //     if (err)
-        //         callback(404, {
-        //             'error': 'user not found, maybe create a new one :)',
-        //             'callback-error': err,
-        //             'error-code': 404
-        //         })
-        //     else
-        //         callback(200, {
-        //             'status': 'ok',
-        //             'user': data,
-        //             'error-code': null
-        //         })
-        // })
+        })
     }
-
-
 }

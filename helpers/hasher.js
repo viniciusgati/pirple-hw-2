@@ -3,9 +3,11 @@
  *
  */
 
-require 'crypto'
+require('crypto')
 
-let lib.hash = function(str){
+let lib = {}
+
+lib.hash = function(str){
   if(typeof(str) == 'string' && str.length > 0){
     var hash = crypto.createHmac('sha256', config.hashingSecret).update(str).digest('hex');
     return hash;
