@@ -111,7 +111,7 @@ handlers.users.put = (payload, callback) => {
 
 handlers.users.delete = (payload, callback) => {
     let email = payload.email.trim()
-    let email = typeof(payload.email) == 'string' && payload.email.trim().length == 11 ? payload.email : false
+    email = typeof(payload.email) == 'string' && payload.email.trim().length == 11 ? payload.email : false
     if (email) {
         let id = hasher.hash(email)
         db.delete('.customers', id, (err) => {
