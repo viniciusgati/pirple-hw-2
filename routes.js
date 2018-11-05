@@ -16,6 +16,7 @@ else
 //define router
 routes = {
     'users': handlers.users,
+    'tokens': handlers.tokens,
 };
-
+console.log(`routes`, routes)
 module.exports = { handlers: handlers, routes: routes }

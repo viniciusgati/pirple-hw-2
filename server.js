@@ -13,18 +13,18 @@ server.http_server = http.createServer((request, response) => {
     // Get the url and parse it
     const parsedUrl = url.parse(request.url)
 
-    // get the content type to deal with and pass the right estructure to the handler
-    const contentType = request.getHeader('Content-Type')
-
     // Get the path and remove extra characters
     const path = parsedUrl.path.replace(/^\/+|\/+$/g,'')
 
-    const payload = ''
+    let payload = ''
     request.on('data', (chunk) => {
         payload += decoder.write(chunk);
     });
 
     request.on('end', () => {
+        // get the content type to deal with and pass the right estructure to the handler
+        const contentType = request.headers['content-type']
+
         // get the handler
         let chosenHandler = (routing.routes[path] != undefined) ? routing.routes[path] : routing.handlers.notFound
 

@@ -3,8 +3,8 @@
  *
  */
 
-require('crypto')
-
+const crypto = require('crypto')
+const config = require('../config')
 let lib = {}
 
 lib.hash = function(str){

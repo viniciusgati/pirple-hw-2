@@ -30,42 +30,56 @@ handlers.users.get = (payload, callback) => {
 handlers.users.post = (payload, callback) => {
     // validates the model
     let email = payload.email.trim()
-    email = typeof(payload.email) == 'string' && payload.email.trim().length == 11 ? payload.email : false
+    email = typeof(payload.email) == 'string' && payload.email.trim().length > 5 ? payload.email : false
     let name = typeof(payload.name) == 'string' && payload.name.length > 5 ? payload.name : false
-    let address = typeof(payload.address) == 'string' && payload.address > 5 ? payload.address : false
-    let street_address = typeof(payload.street_address) == 'string' && payload.street_address > 5 ? payload.street_address : false
+    let address = typeof(payload.address) == 'string' && payload.address.length > 5 ? payload.address : false
+    let street_address = typeof(payload.street_address) == 'string' && payload.street_address.length > 5 ? payload.street_address : false
 
-    // verify if it exists, if yes message 'please use put'
-    let id = hasher.hash(email)
-    db.list('/users', (err, fileNames) => {
-        let exist = fileNames.filter((fileName) => { return fileName == id }).length > 0
-        if(exist)
-            callback(200, {
-                'status': 'ok',
-                'error-code': null,
-            })
-        else {
-            var data = {
-                email: email,
-                name: name,
-                address: address,
-                street_address: street_address
-            }
-            db.create('.customers', id, data, (err) => {
-                if (!err) {
-                    callback(201,{
-                        'status': 'created',
+    if(email && name && address && street_address) {
+        // verify if it exists, if yes message 'please use put'
+        let id = hasher.hash(email)
+        db.list('.customers', (err, fileNames) => {
+            if(! err) {
+                let exist = fileNames.filter((fileName) => { return fileName == id }).length > 0
+                if(exist)
+                    callback(200, {
+                        'status': 'ok',
                         'error-code': null,
+                        'detail': 'alreadly exists'
                     })
-                } else {
-                    callback(500,{
-                        'status': 'file system error',
-                        'error-code': 500,
+                else {
+                    var data = {
+                        email: email,
+                        name: name,
+                        address: address,
+                        street_address: street_address
+                    }
+                    db.create('.customers', id, data, (err) => {
+                        if (!err) {
+                            callback(201,{
+                                'status': 'created',
+                                'error-code': null,
+                            })
+                        } else {
+                            callback(500,{
+                                'status': 'file system error',
+                                'error-code': 500,
+                                'detail': err,
+                            })
+                        }
                     })
                 }
-            })
-        }
-    })
+            } else {
+                console.log(`error:` , err)
+            }
+        })
+    } else {
+        callback(200, {
+            'status': 'ok',
+            'error-code': null,
+            'detail': 'validation errors detected, try sending again with valid data'
+        })
+    }
 }
 
 handlers.users.put = (payload, callback) => {

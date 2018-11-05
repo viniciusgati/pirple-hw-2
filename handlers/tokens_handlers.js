@@ -11,10 +11,11 @@ console.info('loading tokens handlers')
 
 handlers.tokens.post = (payload, callback) => {
     let email = payload.email.trim()
-    email = typeof(payload.email) == 'string' && payload.email.trim().length == 11 ? payload.email : false
+    email = typeof(payload.email) == 'string' && payload.email.trim().length > 5 ? payload.email : false
     if (email) {
         let id = hasher.hash(payload.email.toString())
-        db.list('/users', (err, fileNames) => {
+        db.list('.customers', (err, fileNames) => {
+            console.log(`customers found`, err, fileNames)
             if (err) {
                 callback(404, {
                     'status': 'not found',
@@ -23,6 +24,7 @@ handlers.tokens.post = (payload, callback) => {
                 })
             } else {
                 let exist = fileNames.filter((fileName) => { return fileName == id }).length > 0
+                // se existe o cliente
                 if (exist) {
                     let token = helper.generateRandomToken(20)
                     let expires = Date.now() + 1000 * 60 * 60
@@ -31,6 +33,8 @@ handlers.tokens.post = (payload, callback) => {
                         email: email,
                         expires: expires
                     }
+
+                    // cria o token
                     db.create('.tokens', token, data, (err) => {
                         if (!err) {
                             callback(201,{
@@ -48,10 +52,18 @@ handlers.tokens.post = (payload, callback) => {
                     callback(404, {
                         'status': 'not found',
                         'error-code': '404',
-                        'detail': 'not a valid user email'
+                        'detail': 'user does not exist'
                     })
                 }
             }
         })
+    } else {
+        callback(404, {
+            'status': 'not found',
+            'error-code': '404',
+            'detail': 'user does not exist'
+        })
     }
 }
+
+module.exports = handlers
