@@ -11,7 +11,7 @@ console.info('loading users handlers')
 //send not found message if user requested anything else
 handlers.users.get = (payload, callback) => {
     let hashed_email = hasher.hash(payload.email.toString())
-    db.read(hashed_email, (err, data) => {
+    db.read('.customers', hashed_email, (err, data) => {
         if(err)
             callback(404, {
                 'error': 'user not found, maybe create a new one :)',

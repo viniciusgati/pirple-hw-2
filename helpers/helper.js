@@ -1,3 +1,5 @@
+const db = require('./persistance')
+
 /*
  * Library for hashing some string
  *
@@ -35,6 +37,26 @@ lib.parseJsonToObject = function(str){
   } catch(e){
     return {}
   }
+}
+
+lib.tokenIsValid = function(token) {
+    db.list('.tokens', (err, fileNames) => {
+        if (err)
+            return false
+        let files = fileNames.filter((fileName) => { return fileName == token })
+        if(files.length > 0) {
+            db.read('.tokens', token, (err, data) => {
+                if (err){
+                    return false
+                } else {
+                    // returna expired
+                    return Date.now() <= data.expires
+                }
+            })
+        } else {
+            return false
+        }
+    })
 }
 
 // Create a SHA256 hash
