@@ -17,6 +17,7 @@ else
 routes = {
     'users': handlers.users,
     'tokens': handlers.tokens,
+    'menu': handlers.menu,
 };
 console.log(`routes`, routes)
 module.exports = { handlers: handlers, routes: routes }
