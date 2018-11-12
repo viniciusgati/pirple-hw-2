@@ -5,7 +5,7 @@
 
 let lib = {}
 
-lib.generateRandomToken = function(str){
+lib.generateRandomToken = function(strLength){
   strLength = typeof(strLength) == 'number' && strLength > 0 ? strLength : false
   if(strLength){
     // Define all the possible characters that could go into a string

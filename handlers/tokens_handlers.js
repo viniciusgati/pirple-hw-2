@@ -9,13 +9,37 @@ let handlers = {
 
 console.info('loading tokens handlers')
 
+handlers.tokens.delete = (payload, callback) => {
+    let token = typeof(payload.token) == 'string' ? payload.token : false
+    if (token) {
+        db.delete('.tokens', token, (err) => {
+            if (err) {
+                callback(500,{
+                    'status': 'file system error',
+                    'error-code': 500,
+                })
+            } else {
+                callback(200, {
+                    'status': 'ok',
+                    'error-code': null,
+                })
+            }
+        })
+    } else {
+        callback(404, {
+            'status': 'not found',
+            'error-code': '404',
+            'detail': 'token not exist',
+        })
+    }
+}
+
 handlers.tokens.post = (payload, callback) => {
     let email = payload.email.trim()
     email = typeof(payload.email) == 'string' && payload.email.trim().length > 5 ? payload.email : false
     if (email) {
         let id = hasher.hash(payload.email.toString())
         db.list('.customers', (err, fileNames) => {
-            console.log(`customers found`, err, fileNames)
             if (err) {
                 callback(404, {
                     'status': 'not found',
@@ -27,7 +51,7 @@ handlers.tokens.post = (payload, callback) => {
                 // se existe o cliente
                 if (exist) {
                     let token = helper.generateRandomToken(20)
-                    let expires = Date.now() + 1000 * 60 * 60
+                    let expires = Date.now() + 1000 * 60 * 60 // 1 hour token
                     var data = {
                         hashed_email: id,
                         email: email,
@@ -36,15 +60,17 @@ handlers.tokens.post = (payload, callback) => {
 
                     // cria o token
                     db.create('.tokens', token, data, (err) => {
-                        if (!err) {
-                            callback(201,{
-                                'status': 'created',
-                                'error-code': null,
-                            })
-                        } else {
+                        if (err) {
                             callback(500,{
                                 'status': 'file system error',
                                 'error-code': 500,
+                            })
+                        } else {
+                            callback(201,{
+                                'status': 'created',
+                                'error-code': null,
+                                'token': token,
+                                'expires': data.expires,
                             })
                         }
                     })
