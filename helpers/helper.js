@@ -1,5 +1,3 @@
-const db = require('./persistance')
-
 /*
  * Library for hashing some string
  *
@@ -34,27 +32,27 @@ lib.parseJsonToObject = function(str){
   try{
     var obj = JSON.parse(str)
     return obj
-  } catch(e){
+  } catch(e) {
     return {}
   }
 }
 
-lib.tokenIsValid = function(token) {
+lib.tokenIsValid = function(db, token, callback) {
     db.list('.tokens', (err, fileNames) => {
         if (err)
-            return false
-        let files = fileNames.filter((fileName) => { return fileName == token })
+			callback(false)
+		let files = fileNames.filter((fileName) => { return fileName == token })
         if(files.length > 0) {
             db.read('.tokens', token, (err, data) => {
                 if (err){
-                    return false
+					callback(false)
                 } else {
-                    // returna expired
-                    return Date.now() <= data.expires
+					// returna expired
+					callback(Date.now() <= data.expires)
                 }
             })
         } else {
-            return false
+            callback(false)
         }
     })
 }

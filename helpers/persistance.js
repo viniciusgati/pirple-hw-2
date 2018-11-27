@@ -117,5 +117,9 @@ lib.list = function(dir,callback){
   });
 };
 
+lib.exist = function(dir, file) {
+	return fs.existsSync('.data/'+dir+'/'+file+'.json')
+};
+
 // Export the module
 module.exports = lib;

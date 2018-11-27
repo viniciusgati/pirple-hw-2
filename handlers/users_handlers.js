@@ -48,7 +48,7 @@ handlers.users.post = (payload, callback) => {
                         'detail': 'alreadly exists'
                     })
                 else {
-                    var data = {
+                    let data = {
                         email: email,
                         name: name,
                         address: address,
