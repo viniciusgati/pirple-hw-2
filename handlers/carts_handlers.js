@@ -56,8 +56,7 @@ handlers.cart.post = (payload, callback) => {
 				if(db.exist('.cart', token)) {
 					// read the cart
 					db.read('.cart', token, (err, cart) => {
-						let found = cart.products.filter((product) => {return product.code == product})
-						
+						let found = cart.products.filter(cart_item => cart_item.code == product)
 						if(found.length > 0) {
 							// if the product exists increments the quantity
 							found[0].quantity += 1

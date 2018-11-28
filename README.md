@@ -10,7 +10,7 @@ You are building the API for a pizza-delivery company. Don't worry about a front
 
 3. When a user is logged in, they should be able to GET all the possible menu items (these items can be hardcoded into the system). - ok
 
-4. A logged-in user should be able to fill a shopping cart with menu items - Quase ok, falta iincrementar que nao funcionou bem
+4. A logged-in user should be able to fill a shopping cart with menu items - OK
 
 // TODO:
 
